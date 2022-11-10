@@ -3,10 +3,13 @@ package proxy
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/lunarwhite/load-balancer/balancer"
 )
@@ -21,12 +24,45 @@ var (
 	ReverseProxy = "Balancer-Reverse-Proxy"
 )
 
+// ConnectionTimeout refers to connection timeout for health check
+var ConnectionTimeout = 3 * time.Second
+
 // HTTPProxy refers to a reverse proxy in the balancer
 type HTTPProxy struct {
 	lb      balancer.Balancer
 	hostMap map[string]*httputil.ReverseProxy
 	alive   map[string]bool
 	sync.RWMutex
+}
+
+// GetIP get client IP
+func GetIP(r *http.Request) string {
+	clientIP, _, _ := net.SplitHostPort(r.RemoteAddr)
+	if len(r.Header.Get(XForwardedFor)) != 0 {
+		xff := r.Header.Get(XForwardedFor)
+		s := strings.Index(xff, ", ")
+		if s == -1 {
+			s = len(r.Header.Get(XForwardedFor))
+		}
+		clientIP = xff[:s]
+	} else if len(r.Header.Get(XRealIP)) != 0 {
+		clientIP = r.Header.Get(XRealIP)
+	}
+
+	return clientIP
+}
+
+// GetHost get the hostname, looks like IP:Port
+func GetHost(url *url.URL) string {
+	if _, _, err := net.SplitHostPort(url.Host); err == nil {
+		return url.Host
+	}
+	if url.Scheme == "http" {
+		return fmt.Sprintf("%s:%s", url.Host, "80")
+	} else if url.Scheme == "https" {
+		return fmt.Sprintf("%s:%s", url.Host, "443")
+	}
+	return url.Host
 }
 
 // NewHTTPProxy create  new reverse proxy with url and balancer algorithm
