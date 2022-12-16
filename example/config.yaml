@@ -1,0 +1,15 @@
+schema: http # support `http` and `https`
+port: 8089 # port for balancer
+location: # route matching for reverse proxy
+  - pattern: /
+    proxy_pass: # URLs of the reverse proxy
+      - "https://192.168.1.1"
+      - "https://192.168.1.2"
+      - "https://192.168.1.3"
+      - "https://192.168.1.4"
+    balance_algo: round-robin # supprt `round-robin`,`random`, `ip-hash, `consistent-hash`, `least-load`
+ssl_certificate: # your ssl certificate
+ssl_certificate_key: # your ssl certificate key
+max_req_allowed: 100 # The max number of requests that the balancer can handle at the same time, 0 refers to no limit
+enable_health_check: true
+health_check_interval: 3 # second
