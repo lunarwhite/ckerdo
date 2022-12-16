@@ -11,12 +11,12 @@ import (
 // Config configuration details of balancer
 type Config struct {
 	Schema              string      `yaml:"schema"`
-	Location            []*Location `yaml:"location"`
 	Port                int         `yaml:"port"`
+	Location            []*Location `yaml:"location"`
 	SSLCertificate      string      `yaml:"ssl_certificate"`
 	SSLCertificateKey   string      `yaml:"ssl_certificate_key"`
-	MaxAllowed          uint        `yaml:"max_allowed"`
-	HealthCheck         bool        `yaml:"tcp_health_check"`
+	MaxAllowed          uint        `yaml:"max_req_allowed"`
+	HealthCheck         bool        `yaml:"enable_health_check"`
 	HealthCheckInterval uint        `yaml:"health_check_interval"`
 }
 
@@ -24,7 +24,7 @@ type Config struct {
 type Location struct {
 	Pattern     string   `yaml:"pattern"`
 	ProxyPass   []string `yaml:"proxy_pass"`
-	BalanceAlgo string   `yaml:"balance_mode"`
+	BalanceAlgo string   `yaml:"balance_algo"`
 }
 
 // ReadConfig read configuration from `fileName` file
@@ -48,7 +48,7 @@ func (c *Config) Print() {
 		fmt.Printf("\tRoute: %s\n\tProxy Pass: %s\n\tAlgo: %s\n\n",
 			l.Pattern, l.ProxyPass, l.BalanceAlgo)
 	}
-	fmt.Printf("Health Check: %v\nLocation:\n", c.HealthCheck)
+	fmt.Printf("Enable Health Check: %v\n", c.HealthCheck)
 }
 
 // Validation verify the configuration details of the balancer
