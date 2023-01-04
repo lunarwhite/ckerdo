@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	config, err := utils.ReadConfig("./example/config.yaml")
+	config, err := utils.ReadConfig("./examples/config.yaml")
 	if err != nil {
 		log.Fatalf("read config error: %s", err)
 	}
