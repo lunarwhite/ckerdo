@@ -115,6 +115,17 @@ type Balancer interface {
 }
 ```
 
+## TODO
+
+Enhancement
+
+- [ ] Use a more robust router, such as `gorilla/mux` rather than `http.HandleFunc`.
+- [ ] Use dependency injection to make code more modular and testable.
+- [ ] Use a connection pool to manage connections to the backends.
+- [ ] Use HTTP/2 or WebSockets to reduce the overhead of creating and closing HTTP connections.
+- [ ] Support more lb algorithms.
+- [ ] Add more tests.
+
 ## Contributing
 
 Contributions are welcome. If you are open source newcomer, you can follow [this guide](https://opensource.guide/how-to-contribute/) by GitHub.
